@@ -67,7 +67,7 @@ Overrides.mk: ;
 	$(info Building to $(BUILD_DIR))
 	mkdir -p $(BUILD_DIR)
 	# Execute this Makefile from a build-specific subdirectory
-	$(MAKE) -C $(BUILD_DIR) -I $(CURDIR) -I $(VPATH) -f $(CURDIR)/$(MAKEFILE) --no-print-directory $@
+	$(MAKE) -C $(BUILD_DIR) -I $(CURDIR) -I $(VPATH) -f $(abspath $(MAKEFILE)) --no-print-directory $@
 
 else
 ###
