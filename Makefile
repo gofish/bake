@@ -98,8 +98,6 @@ CPP_EXT := .cpp
 DEP_EXT := .d
 OBJ_EXT := .o
 LIB_EXT := .so
-TAR_EXT := .tar
-GZIP_EXT:= .gz
 
 ### Non-standard tools (defaults)
 #
@@ -307,10 +305,17 @@ $(DEPS_CPP_O): %$(OBJ_EXT): %$(CPP_EXT)
 %$(AR_EXT):
 	$(call announce,AR  $@)
 	$(AR) rcs $@ $?
-%$(TAR_EXT):
+.PRECIOUS: %.tar
+%.tar:
 	$(call announce,TAR $@)
 	$(TAR) rf $@ $?
-%$(GZIP_EXT): %
+%.tgz:
+	$(call announce,TGZ $@)
+	$(TAR) czf $@ $^
+%.gz: %
+	$(call announce,GZ  $@)
+	$(GZIP) -c $< > $@
+%.tgz: %.tar
 	$(call announce,GZ  $@)
 	$(GZIP) -c $< > $@
 
