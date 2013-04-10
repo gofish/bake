@@ -37,7 +37,7 @@ release debug coverage: all
 ### Export search path for source files
 #
 # Override this to change the source root directory
-export VPATH := $(CURDIR)/
+export VPATH ?= $(CURDIR)/
 
 ### Run the clean rule directly
 #
@@ -63,7 +63,7 @@ Overrides.mk: ;
 #
 %:: force
 	$(eval export BUILD_TYPE)
-	$(eval BUILD_DIR=build/$(BUILD_TYPE))
+	$(eval BUILD_DIR ?= build/$(BUILD_TYPE))
 	$(info Building to $(BUILD_DIR))
 	mkdir -p $(BUILD_DIR)
 	# Execute this Makefile from a build-specific subdirectory
