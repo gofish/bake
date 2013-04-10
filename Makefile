@@ -140,6 +140,20 @@ define depends
 $(addprefix $(SUBDIR),$1): $(addprefix $(SUBDIR),$2)
 endef
 
+# A procedure for installing source files to build locations
+#
+define install
+$(eval ifeq ($1,$(dir $1))
+$(foreach src,$2,$(eval $1$(src): $(SUBDIR)$(src)))
+$1%: $(SUBDIR)% | $1.exists
+	$$(call announce,IN  $$@)
+	cp -a $$< $$@
+else
+$$(error Missing trailing slash on install: $1)
+endif
+)
+endef
+
 # Procedures for backing up variables during makefile inclusions
 #
 empty :=
