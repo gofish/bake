@@ -102,6 +102,7 @@ LIB_EXT := .so
 ### Non-standard tools (defaults)
 #
 PROTOC  := protoc
+THRIFT  := thrift
 
 ### Build and release configuration
 #
@@ -257,13 +258,20 @@ $(DEPS_CPP_F): force
 	    fi
 
 # Protocol buffer C++ source generation
-# #   This implicit rule will combine with the .o rule to generate %.pb.o
-# #   from %.proto in two steps.
+#   This implicit rule will combine with the DEPS .o rule in two steps
+#   in order to generate %.pb.o from %.pb.cc from %.proto
 %.pb.cc %.pb.h: %.proto
 	$(call announce,PB  $<)
 	$(PROTOC) -I$(dir $<) --cpp_out=$(dir $@) $<
 	sed -i '1i #pragma GCC diagnostic ignored "-Wshadow"' $(@:.cc=.h) $(@:.h=.cc)
 	sed -i '$a #pragma GCC diagnostic warning "-Wshadow"' $(@:.cc=.h) $(@:.h=.cc)
+
+# Thrift protocol C++ source generation
+#   This implicit rule will combine with the DEPS .o rule in two steps
+#   in order to generate %.pb.o from %.pb.cc from %.thrift
+%.cpp %.h: %.thrift
+	$(call announce,TFT $<)
+	$(THRIFT) -out $(dir $@) -gen cpp $<
 
 ### Compilation pattern rules
 #
