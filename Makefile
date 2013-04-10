@@ -200,14 +200,6 @@ $(foreach path,$(RULES),$(eval $(call include_rules,$(path))))
 .PHONY:  force
 targets: force $(TGTS)
 
-# Make all target directories
-TGT_DIRS := $(foreach tgt,$(TGTS),$(dir $(tgt)))
-$(TGTS): | $(addsuffix .exists,$(TGT_DIRS))
-%/.exists:
-	mkdir -p $(dir $@)
-	touch $@
-.exists:
-
 ### Dependency generation
 #
 # Support for C object files
@@ -228,6 +220,14 @@ DEPS_CC_F := $(sort $(foreach src,$(SRCS_CC) $(SRCS_CPP),$(dir $(src)).cxxflags)
 
 ### Preprocessing pattern rules
 #
+# Subdirectory creation
+DIRS := $(sort $(foreach file,$(SRCS) $(TGTS),$(dir $(file))))
+$(SRCS) $(TGTS): | $(addsuffix .exists,$(DIRS))
+%/.exists:
+	mkdir -p $(dir $@)
+	touch $@
+.exists:
+
 # C/C++ compile flag detection
 #   Have the compiler emit a verbose assembly header for an empty file.
 #   This header includes all supplied and implied flags, along with a
@@ -236,21 +236,18 @@ DEPS_CC_F := $(sort $(foreach src,$(SRCS_CC) $(SRCS_CPP),$(dir $(src)).cxxflags)
 #   specific modifications.  If the flags have changed the .x file is
 #   updated, forcing the .o file to be rebuilt.
 $(DEPS_C_F): force
-	mkdir -p $(dir $@)
 	new_flags=`$(CC) $(CFLAGS) $(CFLAGS_$(dir $@)) -S -fverbose-asm -o - -x c /dev/null 2>/dev/null`; \
 	old_flags=`cat '$@' 2>/dev/null`; \
 	    if [ x"$$new_flags" != x"$$old_flags" ]; then \
 	        echo -n "$$new_flags" >'$@' || exit 1; \
 	    fi
 $(DEPS_CC_F): force
-	mkdir -p $(dir $@)
 	new_flags=`$(CXX) $(CXXFLAGS) $(CXXFLAGS_$(dir $@)) -S -fverbose-asm -o - -x c++ /dev/null 2>/dev/null`; \
 	old_flags=`cat '$@' 2>/dev/null`; \
 	    if [ x"$$new_flags" != x"$$old_flags" ]; then \
 	        echo -n "$$new_flags" >'$@' || exit 1; \
 	    fi
 $(DEPS_CPP_F): force
-	mkdir -p $(dir $@)
 	new_flags=`$(CXX) $(CXXFLAGS) $(CXXFLAGS_$(dir $@)) -S -fverbose-asm -o - -x c++ /dev/null 2>/dev/null`; \
 	old_flags=`cat '$@' 2>/dev/null`; \
 	    if [ x"$$new_flags" != x"$$old_flags" ]; then \
