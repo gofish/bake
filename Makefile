@@ -94,6 +94,7 @@ AR_EXT  := .a
 BIN_EXT :=
 C_EXT   := .c
 CC_EXT  := .cc
+CPP_EXT := .cpp
 DEP_EXT := .d
 OBJ_EXT := .o
 LIB_EXT := .so
@@ -213,12 +214,16 @@ SRCS_C    := $(filter %$(C_EXT),$(SRCS))
 DEPS_C_O  := $(SRCS_C:$(C_EXT)=$(OBJ_EXT))
 DEPS_C_D  := $(SRCS_C:$(C_EXT)=$(DEP_EXT))
 DEPS_C_F  := $(sort $(foreach src,$(SRCS_C),$(dir $(src)).cflags))
-# Support for C++ object files
+# Support for C++ object files (.cc extension)
 SRCS_CC   := $(filter %$(CC_EXT),$(SRCS))
 DEPS_CC_O := $(SRCS_CC:$(CC_EXT)=$(OBJ_EXT))
 DEPS_CC_D := $(SRCS_CC:$(CC_EXT)=$(DEP_EXT))
-DEPS_CC_F := $(sort $(foreach src,$(SRCS_CC),$(dir $(src)).cxxflags))
--include $(DEPS_C_D) $(DEPS_CC_D)
+# Support for C++ object files (.cpp extension)
+SRCS_CPP  := $(filter %$(CPP_EXT),$(SRCS))
+DEPS_CPP_O := $(SRCS_CPP:$(CPP_EXT)=$(OBJ_EXT))
+DEPS_CPP_D := $(SRCS_CPP:$(CPP_EXT)=$(DEP_EXT))
+DEPS_CC_F := $(sort $(foreach src,$(SRCS_CC) $(SRCS_CPP),$(dir $(src)).cxxflags))
+-include $(DEPS_C_D) $(DEPS_CC_D) $(DEPS_CPP_D)
 
 ### Preprocessing pattern rules
 #
@@ -237,6 +242,13 @@ $(DEPS_C_F): force
 	        echo -n "$$new_flags" >'$@' || exit 1; \
 	    fi
 $(DEPS_CC_F): force
+	mkdir -p $(dir $@)
+	new_flags=`$(CXX) $(CXXFLAGS) $(CXXFLAGS_$(dir $@)) -S -fverbose-asm -o - -x c++ /dev/null 2>/dev/null`; \
+	old_flags=`cat '$@' 2>/dev/null`; \
+	    if [ x"$$new_flags" != x"$$old_flags" ]; then \
+	        echo -n "$$new_flags" >'$@' || exit 1; \
+	    fi
+$(DEPS_CPP_F): force
 	mkdir -p $(dir $@)
 	new_flags=`$(CXX) $(CXXFLAGS) $(CXXFLAGS_$(dir $@)) -S -fverbose-asm -o - -x c++ /dev/null 2>/dev/null`; \
 	old_flags=`cat '$@' 2>/dev/null`; \
@@ -263,9 +275,15 @@ $(DEPS_CC_O): $(DEPS_CC_F)
 $(DEPS_CC_O): %$(OBJ_EXT): %$(CC_EXT)
 	$(call announce,C++ $<)
 	$(CXX) $(CXXFLAGS) $(CXXFLAGS_$(dir $@)) -c $< -MMD -MP -MT $@ -MF $(@:$(OBJ_EXT)=$(DEP_EXT)) -o $@
+$(DEPS_CPP_O): $(DEPS_CPP_F)
+$(DEPS_CPP_O): %$(OBJ_EXT): %$(CPP_EXT)
+	$(call announce,C++ $<)
+	$(CXX) $(CXXFLAGS) $(CXXFLAGS_$(dir $@)) -c $< -MMD -MP -MT $@ -MF $(@:$(OBJ_EXT)=$(DEP_EXT)) -o $@
 %$(OBJ_EXT): %$(C_EXT)
 	$(error Need $@ but $< is not listed as a source file)
 %$(OBJ_EXT): %$(CC_EXT)
+	$(error Need $@ but $< is not listed as a source file)
+%$(OBJ_EXT): %$(CPP_EXT)
 	$(error Need $@ but $< is not listed as a source file)
 
 ### Linking pattern rules
