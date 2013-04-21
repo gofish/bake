@@ -31,7 +31,6 @@ endif
 release:        BUILD_TYPE := release
 debug:          BUILD_TYPE := debug
 coverage:       BUILD_TYPE := coverage
-release debug coverage: all
 .PHONY: release debug coverage
 
 ### Export search path for source files
@@ -61,18 +60,19 @@ Overrides.mk: ;
 
 ### Delegate all unspecified goals to a sub-make
 #
-%:: force
+release debug coverage %::     force
 	$(eval export BUILD_TYPE)
-	$(eval BUILD_DIR ?= build/$(BUILD_TYPE))
-	$(info Building to $(BUILD_DIR))
-	mkdir -p $(BUILD_DIR)
 	# Execute this Makefile from a build-specific subdirectory
-	$(MAKE) -C $(BUILD_DIR) -I $(CURDIR) -I $(VPATH) -f $(abspath $(MAKEFILE)) --no-print-directory $@
+	DEST=$${DEST:-"build/$(BUILD_TYPE)"}; \
+	    echo Building to $$DEST && \
+	    mkdir -p "$$DEST" && \
+	    $(MAKE) -C "$$DEST" -I $(CURDIR) -I $(VPATH) -f $(abspath $(MAKEFILE)) --no-print-directory $@
 
 else
 ###
 ## Sub-level Make
 ###
+release debug coverage: all
 
 ### Build-specific compile flags
 #
