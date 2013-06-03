@@ -164,6 +164,12 @@ endif
 )
 endef
 
+# A procedure to declare a test target
+#
+define test
+$(foreach target,$1,$(eval test: test($(addprefix $(SUBDIR),$(target)))))
+endef
+
 # Procedures for backing up variables during makefile inclusions
 #
 empty :=
@@ -342,5 +348,9 @@ $(DEPS_CPP_O): %$(OBJ_EXT): %$(CPP_EXT)
 %.tgz: %.tar
 	$(call announce,GZ  $@)
 	$(GZIP) -c $< > $@
+
+test(%): %
+	$(call announce,TST $(%))
+	$%
 
 endif
