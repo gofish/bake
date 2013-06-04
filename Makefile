@@ -117,11 +117,15 @@ LDLIBS  := $(LDLIBS) $(LDLIBS_$(BUILD_TYPE))
 ### Useful procedures
 #
 
-# Indentation helpers
+# Variable and Indentation helpers
+#   - a variable containing a comma
 #   - an empty variable
 #   - a variable containing a space
 #   - an indentation variable for pretty printing
 #   - a procedure to announce a build step with relative paths
+#
+# See http://www.gnu.org/software/make/manual/make.html#Syntax-of-Functions
+comma := ,
 empty :=
 space := $(empty) $(empty)
 ifeq ($(origin indent),undefined)
@@ -129,6 +133,12 @@ indent := $(space)$(space)
 endif
 define announce
 $(info $(indent)$(tab)$(subst $(VPATH),,$1))
+endef
+
+# A procedure to reverse a list
+#
+define reverse
+$(if $(1),$(call reverse,$(wordlist 2,$(words $(1)),$(1)))) $(firstword $(1))
 endef
 
 # A procedure for declaring dependencies
