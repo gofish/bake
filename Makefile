@@ -149,6 +149,9 @@ endef
 define depends
 $(addprefix $(SUBDIR),$1): $(addprefix $(SUBDIR),$2)
 endef
+define depends_ext
+$(addprefix $(SUBDIR),$1): $2
+endef
 
 # A procedure for installing source files to build locations
 #
