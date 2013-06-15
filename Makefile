@@ -30,8 +30,9 @@ endif
 #
 release:        BUILD_TYPE := release
 debug:          BUILD_TYPE := debug
+profile:        BUILD_TYPE := profile
 coverage:       BUILD_TYPE := coverage
-.PHONY: release debug coverage
+.PHONY: release debug profile coverage
 
 ### Export search path for source files
 #
@@ -60,7 +61,7 @@ Overrides.mk: ;
 
 ### Delegate all unspecified goals to a sub-make
 #
-release debug coverage %::     force
+release debug profile coverage %::     force
 	$(eval export BUILD_TYPE)
 	# Execute this Makefile from a build-specific subdirectory
 	DEST=$${DEST:-"build/$(BUILD_TYPE)"}; \
@@ -72,7 +73,7 @@ else
 ###
 ## Sub-level Make
 ###
-release debug coverage: all
+release debug profile coverage: all
 
 ### Build-specific compile flags
 #
@@ -82,9 +83,12 @@ LDFLAGS_release := -g
 CFLAGS_debug    := -g
 CXXFLAGS_debug  := -g
 LDFLAGS_debug   := -g
-CFLAGS_coverage := --coverage
-CXXFLAGS_coverage:= --coverage
-LDFLAGS_coverage:= --coverage
+CFLAGS_profile  := -pg $(CFLAGS_release)
+CXXFLAGS_profile:= -pg $(CFLAGS_release)
+LDFLAGS_profile := -pg $(CFLAGS_release)
+CFLAGS_coverage := --coverage $(CFLAGS_debug)
+CXXFLAGS_coverage:= --coverage $(CFLAGS_debug)
+LDFLAGS_coverage:= --coverage $(CFLAGS_debug)
 ifeq ($(BUILD_TYPE),coverage)
 export CCACHE_DISABLE := "true"
 endif
