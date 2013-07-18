@@ -229,8 +229,8 @@ endef
 ### Project build rules
 #
 
-# Find all Rules.mk files under the source directory
-RULES := $(shell cd $(VPATH) && find * -depth -name Rules.mk 2>/dev/null | tac)
+# Find all Rules.mk files under the source directory in depth-last order
+RULES := $(call reverse,$(shell cd $(VPATH) && find * -depth -name Rules.mk 2>/dev/null))
 
 # Include the subdirectory rules
 $(foreach path,$(RULES),$(eval $(call include_rules,$(path))))
