@@ -1,0 +1,7 @@
+#!/bin/sh
+if [ -z ${BAKE_HOME:+x} ]
+then
+	BAKE_HOME=$(dirname "$0")
+	BAKE_HOME=$(cd "$BAKE_HOME" && pwd)
+fi
+exec make -f "$BAKE_HOME/bake.mk" "$@"
