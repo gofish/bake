@@ -234,7 +234,9 @@ endef
 #
 
 # Find all Rules.mk files under the source directory in depth-last order
-RULES := $(call reverse,$(shell cd $(VPATH) && find * -depth -name Rules.mk 2>/dev/null))
+RULES := $(shell cd $(VPATH) && find . -depth -name Rules.mk 2>/dev/null)
+RULES := $(patsubst ./%,%,$(RULES))
+RULES := $(call reverse,$(RULES))
 
 # Include the subdirectory rules
 $(foreach path,$(RULES),$(eval $(call include_rules,$(path))))
