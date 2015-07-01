@@ -113,6 +113,9 @@ GZIP    := gzip
 TAR     := tar
 PROTOC  := protoc
 THRIFT  := thrift
+GCOV    := gcov
+LCOV    := lcov
+GENHTML := genhtml
 
 ### Build and release configuration
 #
@@ -360,9 +363,17 @@ $(DEPS_CPP_O): %$(OBJ_EXT): %$(CPP_EXT)
 %.tgz: %.tar
 	$(call announce,GZ  $@)
 	$(GZIP) -c $< > $@
+%.gcov:
+	$(call announce,COV $(@:.gcov=))
+	$(GCOV) -i $(subst $(VPATH),,$(@:.gcov=)) 2>/dev/null | \
+                head -2 | tail -1 | sed 's/.*:/$(indent)$(indent)/'
 
 test(%): %
 	$(call announce,TST $(%))
 	$%
+
+coverage: test $(SRCS:=.gcov)
+	$(LCOV) -c -b $(VPATH) -d . -o lcov.out --no-external > lcov.log
+	$(GENHTML) lcov.out >genhtml.log
 
 endif
