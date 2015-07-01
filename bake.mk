@@ -26,14 +26,6 @@ BUILD_TYPE := debug
 endif
 endif
 
-### Build type as goal overrides environment
-#
-release:        BUILD_TYPE := release
-debug:          BUILD_TYPE := debug
-profile:        BUILD_TYPE := profile
-coverage:       BUILD_TYPE := coverage
-.PHONY: release debug profile coverage
-
 ### Export search path for source files
 #
 # Override this to change the source root directory
@@ -59,9 +51,20 @@ MAKEFILE       := $(firstword $(MAKEFILE_LIST))
 $(MAKEFILE): ;
 Overrides.mk: ;
 
+### Delegate release goals to a sub-make and override BUILD_TYPE
+#
+release debug profile coverage:: force
+	# Goal '$@' overrides current build type '$(BUILD_TYPE)'
+	$(eval export BUILD_TYPE=$@)
+	# Execute this Makefile from a build-specific subdirectory
+	DEST=$${DEST:-"build/$(BUILD_TYPE)"}; \
+	    echo Building to $$DEST && \
+	    mkdir -p "$$DEST" && \
+	    $(MAKE) -C "$$DEST" -I $(CURDIR) -I $(VPATH) -f $(abspath $(MAKEFILE)) --no-print-directory $@
+.PHONY: release debug profile coverage
+
 ### Delegate all unspecified goals to a sub-make
 #
-release debug profile coverage::     force
 %:: force
 	$(eval export BUILD_TYPE)
 	# Execute this Makefile from a build-specific subdirectory
