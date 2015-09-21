@@ -4,4 +4,5 @@ then
 	BAKE_HOME=$(dirname "$0")
 	BAKE_HOME=$(cd "$BAKE_HOME" && pwd)
 fi
+export BAKE_HOME
 exec make -f "$BAKE_HOME/bake.mk" "$@"
