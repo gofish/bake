@@ -188,6 +188,10 @@ define save
 SAVED_$1 := $($1)
 $1 :=
 endef
+define save_from_var
+SAVED_$1 := $($1)
+$1 := $($1_$(SUBDIR))
+endef
 define restore
 $1 := $(SAVED_$1)
 endef
@@ -210,14 +214,14 @@ endef
 define include_rules
 # save variables
 $(eval $(call save,SUBDIR))
+$(eval SUBDIR := $(dir $1))
 $(eval $(call save,SRCS))
 $(eval $(call save,TGTS))
-$(eval $(call save,CFLAGS))
-$(eval $(call save,CXXFLAGS))
-$(eval $(call save,LDFLAGS))
-$(eval $(call save,LDLIBS))
+$(eval $(call save_from_var,CFLAGS))
+$(eval $(call save_from_var,CXXFLAGS))
+$(eval $(call save_from_var,LDFLAGS))
+$(eval $(call save_from_var,LDLIBS))
 # include subdirectory rules
-$(eval SUBDIR := $(dir $1))
 $(eval $(call announce,MK  $1))
 $(eval include $1)
 # process and restore variable
