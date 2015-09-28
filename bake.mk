@@ -161,6 +161,14 @@ define depends_ext
 $(addprefix $(SUBDIR),$1): $2
 endef
 
+# A procedure for declaring relative build flags
+#
+# Usage: $(call flags,path/to/foo/,CFLAGS,-g)
+#
+define flags
+$(eval $2_$(patsubst ./%,%,$(SUBDIR))$1 += $3)
+endef
+
 # A procedure for installing source files to build locations
 #
 define install
