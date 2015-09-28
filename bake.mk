@@ -235,7 +235,7 @@ endef
 
 # Find all Rules.mk files under the source directory in breadth-first order
 RULES := $(shell cd $(VPATH) && \
-                find . -name Rules.mk -printf '%d\t%P\n' 2>/dev/null | \
+                find -L . -name Rules.mk -printf '%d\t%P\n' 2>/dev/null | \
                 sort -n | cut -f2-)
 
 # Include the subdirectory rules
