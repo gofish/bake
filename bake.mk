@@ -156,7 +156,7 @@ endef
 # Usage: $(call depends,bar bar.a,bar.o foo.o)
 #
 define depends
-$(addprefix $(SUBDIR),$1): $(addprefix $(SUBDIR),$2)
+$(addprefix $(SUBDIR),$1): $(shell realpath -m --relative-base=. $(addprefix $(SUBDIR),$2))
 endef
 define depends_ext
 $(addprefix $(SUBDIR),$1): $2
