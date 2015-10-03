@@ -31,25 +31,26 @@ endif
 # Override this to change the source root directory
 export VPATH ?= $(CURDIR)/
 
-### Run the clean rule directly
-#
-clean:
-	$(RM) -r build
-
 ### Additional build types and overrides
 #
 -include Overrides.mk
 
+### Run the clean rule directly
+#
+.PHONY: clean
+clean:
+	$(RM) -r build
+
 ### Force execution of all rules
 #
-%::     force
 .PHONY: force
+%::     force
 
 ### Prevent implicit rules from remaking the Makefiles
 #
 MAKEFILE       := $(firstword $(MAKEFILE_LIST))
-$(MAKEFILE): ;
-Overrides.mk: ;
+$(MAKEFILE):    ;
+Overrides.mk:   ;
 
 ### Delegate release goals to a sub-make and override BUILD_TYPE
 #
