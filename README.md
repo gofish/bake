@@ -11,4 +11,4 @@ Standalone GNU make file supporting "advanced" features such as:
 * simple customization of build rules for each project
 * non-recursive build rule inclusion (speedy make)
 
-Get baked.
+Get [baked](bake.mk).
