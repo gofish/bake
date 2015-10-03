@@ -1,14 +1,14 @@
 bake
 ====
 
-Standalone GNU make script/file supporting:
+Standalone GNU make file supporting "advanced" features such as:
 
-* build types (e.g. release/debug built-in)
-* build sub-directories (no repo pollution, fast clean)
-* non-recursive rule inclusion (speedy make)
-* automatic C/C++ dependency generation
+* a build/ sub-directory (no repo pollution, fast clean)
+* multiple build types (e.g. release/debug/profile/coverage)
+* C/C++ dependency generation and compile flag detection
 * support for protobuf/thrift code generation
-* simple syntax for project rule definition
-* pluggable project hierarchy
+* pluggable projects using the source directory hierarchy
+* simple customization of build rules for each project
+* non-recursive build rule inclusion (speedy make)
 
 Get baked.
