@@ -356,15 +356,12 @@ $(DEPS_CPP_F): force
 
 ### Compilation pattern rules
 #
-$(DEPS_C_O): $(DEPS_C_F)
 $(DEPS_C_O): %$(OBJ_EXT): %$(C_EXT)
 	$(call announce,C   $<)
 	$(CC) $(CFLAGS) $(CFLAGS_$(dir $@)) -c $< -MMD -MP -MT $@ -MF $(@:$(OBJ_EXT)=$(DEP_EXT)) -o $@
-$(DEPS_CC_O): $(DEPS_CC_F)
 $(DEPS_CC_O): %$(OBJ_EXT): %$(CC_EXT)
 	$(call announce,C++ $<)
 	$(CXX) $(CXXFLAGS) $(CXXFLAGS_$(dir $@)) -c $< -MMD -MP -MT $@ -MF $(@:$(OBJ_EXT)=$(DEP_EXT)) -o $@
-$(DEPS_CPP_O): $(DEPS_CPP_F)
 $(DEPS_CPP_O): %$(OBJ_EXT): %$(CPP_EXT)
 	$(call announce,C++ $<)
 	$(CXX) $(CXXFLAGS) $(CXXFLAGS_$(dir $@)) -c $< -MMD -MP -MT $@ -MF $(@:$(OBJ_EXT)=$(DEP_EXT)) -o $@
@@ -412,5 +409,13 @@ coverage: test $(SRCS:=.gcov)
 	$(call announce_raw,COV file://$(abspath index.html))
 	$(LCOV) -c -b $(VPATH) -d . -o lcov.out --no-external > lcov.log
 	$(GENHTML) lcov.out >genhtml.log
+
+### Secondary expansion of certain prerequisites
+#
+.SECONDEXPANSION:
+# Compilation directory flags
+$(DEPS_C_O):    $$(dir $$@).cflags
+$(DEPS_CC_O):   $$(dir $$@).cxxflags
+$(DEPS_CPP_O):  $$(dir $$@).cxxflags
 
 endif
