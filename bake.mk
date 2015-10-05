@@ -331,12 +331,6 @@ $(DEPS_CC_F): force
 	    if [ x"$$new_flags" != x"$$old_flags" ]; then \
 	        echo -n "$$new_flags" >'$@' || exit 1; \
 	    fi
-$(DEPS_CPP_F): force
-	new_flags=`$(CXX) $(CXXFLAGS) $(CXXFLAGS_$(dir $@)) -S -fverbose-asm -o - -x c++ /dev/null 2>/dev/null`; \
-	old_flags=`cat '$@' 2>/dev/null`; \
-	    if [ x"$$new_flags" != x"$$old_flags" ]; then \
-	        echo -n "$$new_flags" >'$@' || exit 1; \
-	    fi
 
 # Protocol buffer C++ source generation
 #   This implicit rule will combine with the DEPS .o rule in two steps
