@@ -6,4 +6,4 @@ SRCS := sub.c
 
 $(call depends,sub.a,sub.o)
 
-$(call flags,sub/,CFLAGS,-DSUB)
+$(call flags,sub/,CFLAGS,-DSUB_SUB)
