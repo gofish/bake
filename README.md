@@ -1,7 +1,7 @@
-bake
+[bake](bake.mk)
 ====
 
-Standalone GNU make file supporting "advanced" features such as:
+Standalone GNU make file supporting features such as:
 
 * a build/ sub-directory (no repo pollution, fast clean)
 * multiple build types (e.g. release/debug/profile/coverage)
@@ -11,4 +11,7 @@ Standalone GNU make file supporting "advanced" features such as:
 * simple customization of build rules for each project
 * non-recursive build rule inclusion (speedy make)
 
-Get [baked](bake.mk).
+Use at your own risk! This is a side project and more rigorous distributors
+will likely desire autoconf or other standard build tools.
+
+The current primary use case is publishing small POSIX C libraries like [ioqueue](../ioqueue).
