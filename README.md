@@ -14,4 +14,6 @@ Standalone GNU make file supporting features such as:
 Use at your own risk! This is a side project and more rigorous distributors
 will likely desire autoconf or other standard build tools.
 
-The current primary use case is publishing small POSIX C libraries like [ioqueue](../ioqueue).
+The current primary use case is publishing small POSIX C libraries like [ioqueue][ioqueue].
+
+[ioqueue]: https://github.com/jfishman/ioqueue
